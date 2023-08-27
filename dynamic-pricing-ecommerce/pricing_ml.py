@@ -4,13 +4,13 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
 
-order_items    = pd.read_csv("/content/olist_order_items_dataset.csv")
-orders         = pd.read_csv("/content/olist_orders_dataset.csv")
-order_payments = pd.read_csv("/content/olist_order_payments_dataset.csv")
-products       = pd.read_csv("/content/olist_products_dataset.csv")
-customers      = pd.read_csv("/content/olist_customers_dataset.csv")
-sellers        = pd.read_csv("/content/olist_sellers_dataset.csv")
-product_category_translation = pd.read_csv("/content/product_category_name_translation.csv")
+order_items    = pd.read_csv("/archive/olist_order_items_dataset.csv")
+orders         = pd.read_csv("/archive/olist_orders_dataset.csv")
+order_payments = pd.read_csv("/archive/olist_order_payments_dataset.csv")
+products       = pd.read_csv("/archive/olist_products_dataset.csv")
+customers      = pd.read_csv("/archive/olist_customers_dataset.csv")
+sellers        = pd.read_csv("/archive/olist_sellers_dataset.csv")
+product_category_translation = pd.read_csv("/archive/product_category_name_translation.csv")
 
 
 def merge_datasets(order_items, orders, order_payments, products, customers, sellers, product_category_translation):
@@ -50,3 +50,16 @@ def evaluate_model(rf, X_test, y_test):
     y_pred = rf.predict(X_test)
     mae = mean_absolute_error(y_test, y_pred)
     print("Mean absolute error:", mae)
+
+
+merged = merge_datasets(order_items, orders, order_payments, products, customers, sellers, product_category_translation)
+save_to_csv(merged, '/content/brazilian_ecommerce_dataset.csv')
+
+df = load_data("/content/brazilian_ecommerce_dataset.csv")
+df = preprocess_data(df)
+
+X_train, X_test, y_train, y_test = split_data(df)
+
+rf = train_model(X_train, y_train)
+
+evaluate_model(rf, X_test, y_test)
